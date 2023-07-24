@@ -17,15 +17,22 @@ class MotionSensor extends Device\GenericDevice implements Contract\MotionSensor
         parent::__construct($id, $model, $properties);
 
         $this->onPropertiesUpdate(function (StateUpdate $update) {
-            if ($update->has('motion')) {
-                $this->emit('motion', [$update->get('motion')]);
+            if ($update->has('motionAt')) {
+                $this->emit('motion', [$update->get('motionAt')]);
             }
         });
     }
 
     public function isActive(): bool
     {
-        return $this->properties->get('motion', false) === true;
+        $motionAt = $this->properties->get('motionAt', 0);
+
+        return (time() - $motionAt) < 60;
+    }
+
+    public function triggerMotion(): void
+    {
+        $this->properties->update(['motionAt' => time()]);
     }
 
     public function getBatteryVoltage(): float
