@@ -25,4 +25,9 @@ class StateUpdate
     {
         return $this->properties;
     }
+
+    public function isEmpty(): bool
+    {
+        return empty($this->properties);
+    }
 }
